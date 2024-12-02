@@ -36,12 +36,12 @@ public final class MusicGroupImpl implements MusicGroup {
 
     @Override
     public Stream<String> albumNames() {
-        return this.albumNames();
+       return this.albums.keySet().stream();
     }
 
     @Override
     public Stream<String> albumInYear(final int year) {
-        return null;
+        return this.albums.entrySet().stream().filter(i->i.getValue()==year).map(i->i.getKey());
     }
 
     @Override
