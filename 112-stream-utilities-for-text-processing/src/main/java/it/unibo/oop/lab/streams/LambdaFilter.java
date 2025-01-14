@@ -34,31 +34,28 @@ import javax.swing.JTextArea;
  * 5) Write the count for each word, e.g. "word word pippo" should output "pippo -> 1 word -> 2"
  *
  */
+
 public final class LambdaFilter extends JFrame {
 
     private static final long serialVersionUID = 1760990730218643730L;
+    private static final String ANY_NON_WORD = "(\\s|\\p{Punct})+";
 
     private enum Command {
         /**
          * Commands.
          */
         IDENTITY("No modifications", Function.identity()),
-        LOWERCASE("Lowercase", s-> s.toLowerCase()),
-        COUNTCHAR("Count the number of chars", s->String.valueOf(s.length())), 
-        COUNTLINES("Count the number of lines", s->String.valueOf(s.split("\n").length)),
-        LISTALPHABETICAL("List all the words in alphabetical order", s->{ 
-            return Arrays.stream(s.split("\\s+"))
-                    .sorted()
-                    .collect(Collectors.joining(" "));
-        }),
-        WORDCOUNT("Write the count for each word", s->{
-            Map<String, Long> wordCount = Arrays.stream(s.split("\\s+"))
-                    .collect(Collectors.groupingBy(word->word, Collectors.counting()));
-            return wordCount.entrySet().stream()
-                    .map(entry->entry.getKey() + "-->" + entry.getValue())
-                    .collect(Collectors.joining("\n"));
-
-        });
+        TOLOWER("Lowercase", String:: toLowerCase), 
+        CHARS("Count Chars", s -> Integer.toString(s.length())),
+        LINES("Count lines", s -> Long.toString(s.chars().filter(e-> e == '\n').count()+1)), 
+        ALPHABETICAL("Sort in alphabetical order", s->
+            Arrays.stream(s.split(ANY_NON_WORD)).sorted()
+            .collect(Collectors.joining("\n"))),
+        WORD("Write the count of each word", s->
+            Arrays.stream(s.split(ANY_NON_WORD))
+            .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
+            .entrySet().stream()
+            .map(e-> e.getKey()))
 
 
         private final String commandName;
