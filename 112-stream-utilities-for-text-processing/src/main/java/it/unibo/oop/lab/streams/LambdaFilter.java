@@ -55,9 +55,9 @@ public final class LambdaFilter extends JFrame {
             Arrays.stream(s.split(ANY_NON_WORD))
             .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
             .entrySet().stream()
-            .map(e-> e.getKey()))
-
-
+            .map(e-> e.getKey()+ "-->" + e.getValue())
+            .collect(Collectors.joining("\n"))
+            );
         private final String commandName;
         private final Function<String, String> fun;
 
